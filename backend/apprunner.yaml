@@ -1,0 +1,43 @@
+## Jan-Sahayak App Runner Service Config
+## Use with: aws apprunner create-service --cli-input-yaml file://aws/apprunner.yaml
+## Or use the AWS Console — refer to DEPLOYMENT.md for step-by-step instructions.
+
+ServiceName: jan-sahayak-backend
+
+SourceConfiguration:
+  AuthenticationConfiguration:
+    AccessRoleArn: arn:aws:iam::YOUR_ACCOUNT_ID:role/JanSahayakAppRunnerRole
+  ImageRepository:
+    ImageIdentifier: YOUR_ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/jan-sahayak-backend:latest
+    ImageConfiguration:
+      Port: "8000"
+      RuntimeEnvironmentVariables:
+        AWS_DEFAULT_REGION: ap-south-1
+        MOCK_MODE: "false"
+        ALLOWED_ORIGINS: "*"
+        # ── Add secrets via AWS Secrets Manager or set in the console ──
+        # AWS_ACCESS_KEY_ID: <from Secrets Manager>
+        # AWS_SECRET_ACCESS_KEY: <from Secrets Manager>
+        # GROQ_API_KEY: <from Secrets Manager>
+        # COGNITO_USER_POOL_ID: <your pool id>
+        # COGNITO_APP_CLIENT_ID: <your app client id>
+    ImageRepositoryType: ECR
+
+InstanceConfiguration:
+  Cpu: "1 vCPU"
+  Memory: "2 GB"
+  InstanceRoleArn: arn:aws:iam::YOUR_ACCOUNT_ID:role/JanSahayakAppRunnerRole
+
+HealthCheckConfiguration:
+  Protocol: HTTP
+  Path: /health
+  Interval: 20
+  Timeout: 10
+  HealthyThreshold: 2
+  UnhealthyThreshold: 3
+
+NetworkConfiguration:
+  EgressConfiguration:
+    EgressType: DEFAULT # PUBLIC — needed for Groq API calls, Cognito JWKS, etc.
+
+AutoScalingConfigurationArn: "" # Leave empty to use App Runner's default auto-scaling

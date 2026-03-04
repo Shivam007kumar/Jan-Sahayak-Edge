@@ -1,0 +1,37 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Secrets — NEVER bake into image
+.env
+*.env
+
+# Dev / test artefacts
+local_crawler_output.json
+*.log
+*.log.*
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Git history (not needed in container)
+.git/
+.gitignore
+
+# Large data files that shouldn't go in image (only db goes in)
+knowledge.json
+
+# Scripts that are only for local use
+scripts/

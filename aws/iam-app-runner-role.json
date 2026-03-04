@@ -1,0 +1,111 @@
+{
+  "_comment": "=======================================================================",
+  "_comment_1": "Jan-Sahayak — App Runner Execution Role",
+  "_comment_2": "",
+  "_comment_3": "HOW TO USE:",
+  "_comment_4": "  1. Create the trust policy (allows App Runner to assume this role):",
+  "_comment_5": "     aws iam create-role \\",
+  "_comment_6": "       --role-name JanSahayakAppRunnerRole \\",
+  "_comment_7": "       --assume-role-policy-document file://trust-policy.json",
+  "_comment_8": "",
+  "_comment_9": "  2. Attach the permission policy:",
+  "_comment_10": "     aws iam put-role-policy \\",
+  "_comment_11": "       --role-name JanSahayakAppRunnerRole \\",
+  "_comment_12": "       --policy-name JanSahayakPermissions \\",
+  "_comment_13": "       --policy-document file://iam-app-runner-role.json",
+  "_comment_14": "=======================================================================",
+
+  "Version": "2012-10-17",
+  "Statement": [
+
+    {
+      "Sid": "BedrockInvoke",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*::foundation-model/amazon.nova-lite-v1:0",
+        "arn:aws:bedrock:*::foundation-model/anthropic.claude-3-haiku-20240307-v1:0"
+      ]
+    },
+
+    {
+      "Sid": "PollyTTS",
+      "Effect": "Allow",
+      "Action": [
+        "polly:SynthesizeSpeech",
+        "polly:DescribeVoices"
+      ],
+      "Resource": "*"
+    },
+
+    {
+      "Sid": "S3KnowledgeBase",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::jan-sahayak-knowledge-base-2026",
+        "arn:aws:s3:::jan-sahayak-knowledge-base-2026/*"
+      ]
+    },
+
+    {
+      "Sid": "DynamoDBCache",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DescribeTable"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/JanSahayakCache"
+      ]
+    },
+
+    {
+      "Sid": "CognitoUserPool",
+      "Effect": "Allow",
+      "Action": [
+        "cognito-idp:SignUp",
+        "cognito-idp:InitiateAuth",
+        "cognito-idp:RespondToAuthChallenge",
+        "cognito-idp:GetUser",
+        "cognito-idp:DescribeUserPool"
+      ],
+      "Resource": "*"
+    },
+
+    {
+      "Sid": "ECRPull",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+      ],
+      "Resource": "*"
+    },
+
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "*"
+    }
+
+  ]
+}
