@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, Leaf, Building2, Rocket, GraduationCap, LayoutGrid, Heart, FileText, ArrowUpRight, Home, X } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/feed';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = `${API_BASE}/api/feed`;
 
 const CATEGORIES = [
     { id: 'all', label: 'All', icon: LayoutGrid },

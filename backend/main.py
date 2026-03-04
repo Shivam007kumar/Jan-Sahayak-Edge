@@ -192,8 +192,8 @@ async def health_check():
 
 # ── DynamoDB Cache Helpers ──
 
-def _cache_key(query: str, vault_docs: list) -> str:
-    raw = f"{query}|{'|'.join(sorted(vault_docs))}"
+def _cache_key(query: str, vault_docs: list, user_id: str = "anonymous") -> str:
+    raw = f"{user_id}|{query}|{'|'.join(sorted(vault_docs))}"
     return hashlib.sha256(raw.encode()).hexdigest()
 
 def get_cached_response(cache_key: str) -> Optional[dict]:
@@ -507,7 +507,7 @@ async def chat_endpoint(context: UserContext, user: dict = Depends(get_current_u
     save_message(user_id, "user", context.query)
 
     # Check DynamoDB cache first
-    ck = _cache_key(context.query, context.vault_docs)
+    ck = _cache_key(context.query, context.vault_docs, user_id)
     cached = get_cached_response(ck)
     if cached:
         return AgentResponse(**cached)

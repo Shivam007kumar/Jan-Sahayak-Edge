@@ -7,11 +7,26 @@ const VAULT_KEY = 'jan_sahayak_vault';
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_URL = `${API_BASE}/api/chat`;
 
+// Helper to get or create a persistent session ID for guest users
+function getOrCreateSessionId() {
+    let sessionId = localStorage.getItem('guest_session_id');
+    if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        localStorage.setItem('guest_session_id', sessionId);
+    }
+    return sessionId;
+}
+
 // Helper to get auth headers
 function getAuthHeaders() {
+    const headers = {
+        'X-Session-Id': getOrCreateSessionId()
+    };
     const token = localStorage.getItem('id_token');
-    if (token) return { Authorization: `Bearer ${token}` };
-    return {};
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
 }
 
 function TypingIndicator() {
